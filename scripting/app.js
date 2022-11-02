@@ -88,6 +88,9 @@ let storeFrontParameters = {
     avgCookieSale: 0
 }
 
+
+// Main structure for each particular store front
+// Contains location name, array of sales per hour, total cookies sold that day
 let storeFront = {
     city: '',
     hourlyData: [],
@@ -116,16 +119,22 @@ let storeFront = {
         }
         console.log(this.dailyCookieSales);
     },
-    printLocationToHTML(){
-        document.getElementById("header").innerHTML = `Location: ${this.city}`;
+    printLocationTableToHTML(){
+
+        let makeATable = document.getElementById(body);
         
-        let stringToPrint = `<tr><th>Time</th><th>Cookies</th></tr>`;
-        for (let i = 0; i < this.hourlyData.length; i++){
-            stringToPrint += `<tr><td>${this.hourlyData[i].time} </td><td> ${this.hourlyData[i].hrCookieSales}</td></tr>`;            
-        }
+
+
+
+        // document.getElementById("header").innerHTML = `Location: ${this.city}`;
         
-        stringToPrint += `<tr><td> Total: </td> <td> ${this.dailyCookieSales} </td></tr>`;
-        document.getElementById("listPrintOut").innerHTML = `${stringToPrint}`;
+        // let stringToPrint = `<tr><th>Time</th><th>Cookies</th></tr>`;
+        // for (let i = 0; i < this.hourlyData.length; i++){
+        //     stringToPrint += `<tr><td>${this.hourlyData[i].time} </td><td> ${this.hourlyData[i].hrCookieSales}</td></tr>`;            
+        // }
+        
+        // stringToPrint += `<tr><td> Total: </td> <td> ${this.dailyCookieSales} </td></tr>`;
+        // document.getElementById("listPrintOut").innerHTML = `${stringToPrint}`;
     }
 }
 
@@ -134,7 +143,7 @@ let hourData = {
     hrCookieSales: 0
 }
 
-let numberOfLocations = 0;
+let numberOfLocations = 5;
 let allStoreFrontParameters = []
 let allLocationProjections = [];
 
@@ -151,13 +160,23 @@ let allLocationProjections = [];
 //     numberOfLocations++;
 // }
 
-    allStoreFrontParameters[numberOfLocations] = Object.create(storeFrontParameters);
-    allStoreFrontParameters[numberOfLocations].city = "Seattle";
-    allStoreFrontParameters[numberOfLocations].minCustHr = 23;
-    allStoreFrontParameters[numberOfLocations].maxCustHr = 65;
-    allStoreFrontParameters[numberOfLocations].avgCookieSale = 6.3;
+    // allStoreFrontParameters[numberOfLocations] = Object.create(storeFrontParameters);
+    // allStoreFrontParameters[numberOfLocations].city = "Seattle";
+    // allStoreFrontParameters[numberOfLocations].minCustHr = 23;
+    // allStoreFrontParameters[numberOfLocations].maxCustHr = 65;
+    // allStoreFrontParameters[numberOfLocations].avgCookieSale = 6.3;
 
-    numberOfLocations++;
+    // numberOfLocations++;
+
+    for (let i = 0; i < numberOfLocations; i++){
+        allStoreFrontParameters[i] = Object.create(storeFrontParameters);
+    }
+
+    allStoreFrontParameters[0] = {city: "Seattle", minCustHr: 23, maxCustHr: 65, avgCookieSale: 6.3};
+    allStoreFrontParameters[1] = {city: "Tokyo", minCustHr: 3, maxCustHr: 24, avgCookieSale: 1.2};
+    allStoreFrontParameters[2] = {city: "Dubai", minCustHr: 11, maxCustHr: 38, avgCookieSale: 3.7};
+    allStoreFrontParameters[3] = {city: "Paris", minCustHr: 20, maxCustHr: 38, avgCookieSale: 2.3};
+    allStoreFrontParameters[4] = {city: "Lima", minCustHr: 23, maxCustHr: 16, avgCookieSale: 4.6};
 
 
 // Constructing the table of locations
@@ -174,7 +193,9 @@ for (let i = 0; i < numberOfLocations; i++){
     allLocationProjections[i].tabulateTotalSales();
 }
 
-allLocationProjections[0].printLocationToHTML();
+for (let i = 0; i < numberOfLocations; i++){
+    allLocationProjections[i].printLocationTableToHTML();
+} 
 
 
 
