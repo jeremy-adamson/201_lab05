@@ -16,11 +16,7 @@ const openingTime = '6am';
 const closingTime = '8pm';
 const numberOfOpenHours = twentyFourHour(closingTime) - twentyFourHour(openingTime);
 
-// const fs = require('fs')
-// fs.readFile('data/citydata.txt', 'utf-8', (err, importedData) => {
-//     if (err) throw err;
-//     console.log(importedData);
-// })
+
 
 
 // Converts time to 24 hour (military) time and keeps int datatype
@@ -41,6 +37,7 @@ function twentyFourHour(time){
 }
 
 // Converts time to 12 hour (am/pm) time and returns string datatype
+// Not currently setup for going past 11pm
 function twelveHour(time){
     let intTime = Number(time);
     if (intTime < 12){
@@ -54,6 +51,7 @@ function twelveHour(time){
     }
 }
 
+// Increments a given time (string) to the next hour
 function incrementHour(time){
     time = twentyFourHour(time) + 1;
     return (twelveHour(time));
@@ -75,12 +73,12 @@ function populateProjectedStoreSales(city, cityParameters){
 // Passed storeFrontParameters type, return integer
 function predictHourlyCustomers(cityParameters){
     let custRange = cityParameters.maxCustHr - cityParameters.minCustHr;
-    let estimatedCustomers = Math.floor(Math.random() * custRange + 1 + cityParameters.minCustHr);
+    let estimatedCustomers = Math.floor(Math.random() * (custRange + 1) + cityParameters.minCustHr);
     return estimatedCustomers;
 }
 
 
-
+// Main structure to store the given parameters for one particular location
 let storeFrontParameters = {
     city: '',
     minCustHr: 0,
@@ -89,7 +87,7 @@ let storeFrontParameters = {
 }
 
 
-// Main structure for each particular store front
+// Main structure for each particular store front to track sales by hour
 // Contains location name, array of sales per hour, total cookies sold that day
 let storeFront = {
     city: '',
@@ -104,6 +102,8 @@ let storeFront = {
         }
         
     },
+
+    // Calculates the sum of all the cookies sold that day and stores the value in the object
     tabulateTotalSales(){
         let summation = 0;
         for (let i = 0; i < this.hourlyData.length; i++){
@@ -111,6 +111,8 @@ let storeFront = {
         }
         this.dailyCookieSales = summation;
     },
+
+    // Prints location data to the console log
     printLocationToConsole(){
 
         console.log(this.city);
@@ -119,22 +121,77 @@ let storeFront = {
         }
         console.log(this.dailyCookieSales);
     },
+
+    // Prints location data to HTML in an unordered list format
+    printLocationULtoHTML(){
+        const parentElement = document.getElementById("listPrintOut");
+
+        const listTitle = document.createElement('p');
+        listTitle.textContent = `Location: ${this.city}`;
+        parentElement.appendChild(listTitle);
+
+        const unorderedList = document.createElement('ul');
+        parentElement.appendChild(unorderedList);
+
+        for (let i = 0; i < this.hourlyData.length; i++){
+            const listItem = document.createElement('li');
+            listItem.textContent = `${this.hourlyData[i].time}: ${this.hourlyData[i].hrCookieSales}`;
+            unorderedList.appendChild(listItem);
+        }
+
+        const printTotal = document.createElement('p');
+        printTotal.textContent = `Total: ${this.dailyCookieSales}`;
+        parentElement.appendChild(printTotal);
+
+    },
+
+    // Prints location data to a table
     printLocationTableToHTML(){
+    //  Method#1
+    //     let parentElement = document.getElementById("listPrintOut");
 
-        let makeATable = document.getElementById(body);
+    //     let makeATable = document.createElement('table');
+    //     parentElement.appendChild(makeATable);
+
+    //     let makeRow = document.createElement('tr');
+    //     makeATable.appendChild(makeRow);
+
+                
+    //     let makeHeading1 = document.createElement('th');
+    //     let makeHeading2 = document.createElement('th');
+    //     makeHeading1.textContent = `Time`;
+    //     makeRow.appendChild(makeHeading1);
+    //     makeHeading2.textContent = `Cookies`;
+    //     makeRow.appendChild(makeHeading2);
+
+
+    //     for (let i = 0; i < this.hourlyData.length; i++){
+
+    //         let tableData1 = document.createElement('td');
+    //         let tableData2 = document.createElement('td');
+    //         let tableRow = document.createElement('tr');
+
+    //         tableData1.textContent = `${this.hourlyData[i].time}`;
+    //         tableData2.textContent = `${this.hourlyData[i].hrCookieSales}`;
+
+    //         tableRow.appendChild(tableData1);
+    //         tableRow.appendChild(tableData2);
+
+    //         makeATable.appendChild(tableRow);              
+            
+    //     }
+
+
+    // Method#2
+    //     // document.getElementById("header").innerHTML = `Location: ${this.city}`;
         
-
-
-
-        // document.getElementById("header").innerHTML = `Location: ${this.city}`;
+    //     // let stringToPrint = `<tr><th>Time</th><th>Cookies</th></tr>`;
+    //     // for (let i = 0; i < this.hourlyData.length; i++){
+    //     //     stringToPrint += `<tr><td>${this.hourlyData[i].time} </td><td> ${this.hourlyData[i].hrCookieSales}</td></tr>`;            
+    //     // }
         
-        // let stringToPrint = `<tr><th>Time</th><th>Cookies</th></tr>`;
-        // for (let i = 0; i < this.hourlyData.length; i++){
-        //     stringToPrint += `<tr><td>${this.hourlyData[i].time} </td><td> ${this.hourlyData[i].hrCookieSales}</td></tr>`;            
-        // }
-        
-        // stringToPrint += `<tr><td> Total: </td> <td> ${this.dailyCookieSales} </td></tr>`;
-        // document.getElementById("listPrintOut").innerHTML = `${stringToPrint}`;
+    //     // stringToPrint += `<tr><td> Total: </td> <td> ${this.dailyCookieSales} </td></tr>`;
+    //     // document.getElementById("listPrintOut").innerHTML = `${stringToPrint}`;
     }
 }
 
@@ -193,11 +250,10 @@ for (let i = 0; i < numberOfLocations; i++){
     allLocationProjections[i].tabulateTotalSales();
 }
 
+// Print Locations in an unordered list
 for (let i = 0; i < numberOfLocations; i++){
-    allLocationProjections[i].printLocationTableToHTML();
+    allLocationProjections[i].printLocationULtoHTML();
 } 
-
-
 
 
 // function storeFrontParameters(city, minCustHr, maxCustHr, avgCookieSale){
@@ -219,3 +275,8 @@ for (let i = 0; i < numberOfLocations; i++){
 
 // }
 
+// const fs = require('fs')
+// fs.readFile('data/citydata.txt', 'utf-8', (err, importedData) => {
+//     if (err) throw err;
+//     console.log(importedData);
+// })
