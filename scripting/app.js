@@ -65,8 +65,9 @@ function predictHourlyCookies(customers, avePerCust){
 function populateProjectedStoreSales(city, cityParameters){
     for (let i = 0; i < numberOfOpenHours; i++){
         let rawSales = 0;
-       rawSales = predictHourlyCookies(predictHourlyCustomers(cityParameters), cityParameters.avgCookieSale);
-       city.hourlyData[i].hrCookieSales = Math.round(rawSales);
+        rawSales = predictHourlyCookies(predictHourlyCustomers(cityParameters), cityParameters.avgCookieSale);
+        city.hourlyData[i].hrCookieSales = Math.round(rawSales);
+        // return (Math.round(rawSales));
     }
 }
 
@@ -79,17 +80,21 @@ function predictHourlyCustomers(cityParameters){
 
 
 // Main structure to store the given parameters for one particular location
-let storeFrontParameters = {
+const storeFrontParameters = {
     city: '',
     minCustHr: 0,
     maxCustHr: 0,
     avgCookieSale: 0
 }
 
+const hourData = {
+    time: '',
+    hrCookieSales: 0
+}
 
 // Main structure for each particular store front to track sales by hour
 // Contains location name, array of sales per hour, total cookies sold that day
-let storeFront = {
+const storeFront = {
     city: '',
     hourlyData: [],
     dailyCookieSales: 0,
@@ -195,10 +200,7 @@ let storeFront = {
     }
 }
 
-let hourData = {
-    time: '',
-    hrCookieSales: 0
-}
+
 
 let numberOfLocations = 5;
 let allStoreFrontParameters = []
@@ -217,14 +219,6 @@ let allLocationProjections = [];
 //     numberOfLocations++;
 // }
 
-    // allStoreFrontParameters[numberOfLocations] = Object.create(storeFrontParameters);
-    // allStoreFrontParameters[numberOfLocations].city = "Seattle";
-    // allStoreFrontParameters[numberOfLocations].minCustHr = 23;
-    // allStoreFrontParameters[numberOfLocations].maxCustHr = 65;
-    // allStoreFrontParameters[numberOfLocations].avgCookieSale = 6.3;
-
-    // numberOfLocations++;
-
     for (let i = 0; i < numberOfLocations; i++){
         allStoreFrontParameters[i] = Object.create(storeFrontParameters);
     }
@@ -233,7 +227,7 @@ let allLocationProjections = [];
     allStoreFrontParameters[1] = {city: "Tokyo", minCustHr: 3, maxCustHr: 24, avgCookieSale: 1.2};
     allStoreFrontParameters[2] = {city: "Dubai", minCustHr: 11, maxCustHr: 38, avgCookieSale: 3.7};
     allStoreFrontParameters[3] = {city: "Paris", minCustHr: 20, maxCustHr: 38, avgCookieSale: 2.3};
-    allStoreFrontParameters[4] = {city: "Lima", minCustHr: 23, maxCustHr: 16, avgCookieSale: 4.6};
+    allStoreFrontParameters[4] = {city: "Lima", minCustHr: 2, maxCustHr: 16, avgCookieSale: 4.6};
 
 
 // Constructing the table of locations
@@ -248,13 +242,21 @@ for (let i = 0; i < numberOfLocations; i++){
 for (let i = 0; i < numberOfLocations; i++){
     populateProjectedStoreSales(allLocationProjections[i], allStoreFrontParameters[i]);
     allLocationProjections[i].tabulateTotalSales();
+
+    // for (let j = 0; j < numberOfOpenHours; j++)
+    // {
+    //     allLocationProjections[i].hourlyData[j].hrCookieSales = predictHourlyCookies(predictHourlyCustomers(allStoreFrontParameters[i]), allStoreFrontParameters[i].avgCookieSale);
+    // }
+    
 }
 
 // Print Locations in an unordered list
 for (let i = 0; i < numberOfLocations; i++){
     allLocationProjections[i].printLocationULtoHTML();
-} 
-
+}
+ 
+console.log(storeFront);
+console.log(allLocationProjections);
 
 // function storeFrontParameters(city, minCustHr, maxCustHr, avgCookieSale){
 //     this.city = city;
