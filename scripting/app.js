@@ -1,17 +1,5 @@
 'use strict';
 
-// Read off of a file
-// Read a structure with
-    // Location
-    // Min Cust/hr
-    // Max Cust/hr
-    // Avg Cookies/Sale
-
-// Random number selected within Min/Max range
-// Each hour from 6am - 8pm
-// Structure with Location, SalesArray, Total
-// Array structure with time and sale
-
 const openingTime = '6am';
 const closingTime = '8pm';
 const numberOfOpenHours = twentyFourHour(closingTime) - twentyFourHour(openingTime);
@@ -31,8 +19,7 @@ function twentyFourHour(time){
         return (intTime + 12);
     } else {
         console.log(`Something REALLY went wrong converting to 24 hour time`);
-    }
-    
+    }    
 }
 
 // Converts time to 12 hour (am/pm) time and returns string datatype
@@ -91,8 +78,8 @@ const storeFrontParameters = {
 // Main structure for each particular store front to track sales by hour
 // Contains location name, array of sales per hour, total cookies sold that day
 class storeFront {
-    constructor() {
-        this.city = '';
+    constructor(location) {
+        this.city = location;
         this.hourlyData = [];
         this.dailyCookieSales = 0;
 
@@ -107,7 +94,7 @@ class storeFront {
             this.hourlyData[i].time = incrementalHour;
             incrementalHour = incrementHour(incrementalHour);
         }
-    }   
+    }
 
     // Calculates the sum of all the cookies sold that day and stores the value in the object
     tabulateTotalSales(){
@@ -134,11 +121,12 @@ class storeFront {
 
         const dividerTag = document.createElement('div');
         dividerTag.setAttribute('id', 'sideBySide');
+        dividerTag.setAttribute('class', "grid-item");
         parentElement.appendChild(dividerTag);
 
         const listTitle = document.createElement('p');
         listTitle.setAttribute('id', 'location');
-        listTitle.textContent = `Location: ${this.city}`;        
+        listTitle.textContent = `Location: ${this.city}`;     
         dividerTag.appendChild(listTitle);
 
         const unorderedList = document.createElement('ul');
@@ -208,43 +196,25 @@ class storeFront {
 }
 
 
-
+// Givens
 let numberOfLocations = 5;
-let allStoreFrontParameters = []
+let allStoreFrontParameters = [];
 let allLocationProjections = [];
 
-// // Read from file here!!!
-// let endOfRead = false;
-// while (!endOfRead){
-//      // *** READ FROM FILE HERE***
-//     allStoreFrontParameters[numberOfLocations] = Object.create(storeFrontParameters);
-//     allStoreFrontParameters[numberOfLocations].city = Seattle;
-//     allStoreFrontParameters[numberOfLocations].minCustHr = 23;
-//     allStoreFrontParameters[numberOfLocations].maxCustHr = 65;
-//     allStoreFrontParameters[numberOfLocations].avgCookieSale = 6.3;
-    
-//     numberOfLocations++;
-// }
+for (let i = 0; i < numberOfLocations; i++){
+    allStoreFrontParameters[i] = Object.create(storeFrontParameters);
+}
 
-
-// Plan is to have this read from a file at a later date
-// May later expand the storefront class to include portions of this information depending on future requirements
-    for (let i = 0; i < numberOfLocations; i++){
-        allStoreFrontParameters[i] = Object.create(storeFrontParameters);
-    }
-
-    allStoreFrontParameters[0] = {city: "Seattle", minCustHr: 23, maxCustHr: 65, avgCookieSale: 6.3};
-    allStoreFrontParameters[1] = {city: "Tokyo", minCustHr: 3, maxCustHr: 24, avgCookieSale: 1.2};
-    allStoreFrontParameters[2] = {city: "Dubai", minCustHr: 11, maxCustHr: 38, avgCookieSale: 3.7};
-    allStoreFrontParameters[3] = {city: "Paris", minCustHr: 20, maxCustHr: 38, avgCookieSale: 2.3};
-    allStoreFrontParameters[4] = {city: "Lima", minCustHr: 2, maxCustHr: 16, avgCookieSale: 4.6};
+allStoreFrontParameters[0] = {city: "Seattle", minCustHr: 23, maxCustHr: 65, avgCookieSale: 6.3};
+allStoreFrontParameters[1] = {city: "Tokyo", minCustHr: 3, maxCustHr: 24, avgCookieSale: 1.2};
+allStoreFrontParameters[2] = {city: "Dubai", minCustHr: 11, maxCustHr: 38, avgCookieSale: 3.7};
+allStoreFrontParameters[3] = {city: "Paris", minCustHr: 20, maxCustHr: 38, avgCookieSale: 2.3};
+allStoreFrontParameters[4] = {city: "Lima", minCustHr: 2, maxCustHr: 16, avgCookieSale: 4.6};
 
 
 // Constructing the table of locations
 for (let i = 0; i < numberOfLocations; i++){
-
-    allLocationProjections[i] = new storeFront();
-    allLocationProjections[i].city = allStoreFrontParameters[i].city;
+    allLocationProjections[i] = new storeFront(allStoreFrontParameters[i].city);
 }
 
 // Populate the table of locations with projected data
@@ -254,34 +224,10 @@ for (let i = 0; i < numberOfLocations; i++){
 }
 
 // Print Locations in an unordered list
+let cssColumnFormatting = '';
 for (let i = 0; i < numberOfLocations; i++){
     allLocationProjections[i].printLocationULtoHTML();
+    cssColumnFormatting += `auto `;
 }
- 
-console.log(storeFront);
-console.log(allLocationProjections);
+document.getElementById('listPrintOut').style.gridTemplateColumns = cssColumnFormatting;
 
-// function storeFrontParameters(city, minCustHr, maxCustHr, avgCookieSale){
-//     this.city = city;
-//     this.minCustHr = minCustHr;
-//     this.maxCustHr = maxCustHr;
-//     this.avgCookieSale = aveCookieSale;
-// }
-
-// function storeFront(city, salesStruct, totalSales){
-//     this.city = city;
-//     this.salesStruct = salesStruct;
-//     this.totalSales = totalSales;
-// }
-
-// function salesStruct(time, sales){
-//     this.time = time;
-//     this.sales = sales;
-
-// }
-
-// const fs = require('fs')
-// fs.readFile('data/citydata.txt', 'utf-8', (err, importedData) => {
-//     if (err) throw err;
-//     console.log(importedData);
-// })
