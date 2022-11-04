@@ -1,4 +1,5 @@
 'use strict';
+// TEST
 
 // Read off of a file
 // Read a structure with
