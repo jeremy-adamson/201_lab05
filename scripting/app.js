@@ -18,7 +18,6 @@ const numberOfOpenHours = twentyFourHour(closingTime) - twentyFourHour(openingTi
 
 
 
-
 // Converts time to 24 hour (military) time and keeps int datatype
 function twentyFourHour(time){
     let stringTime = time.slice(0, time.length-2);
@@ -87,26 +86,28 @@ const storeFrontParameters = {
     avgCookieSale: 0
 }
 
-const hourData = {
-    time: '',
-    hrCookieSales: 0
-}
+
 
 // Main structure for each particular store front to track sales by hour
 // Contains location name, array of sales per hour, total cookies sold that day
-const storeFront = {
-    city: '',
-    hourlyData: [],
-    dailyCookieSales: 0,
-    constructHourDataArray(){
+class storeFront {
+    constructor() {
+        this.city = '';
+        this.hourlyData = [];
+        this.dailyCookieSales = 0;
+
+        const hourData = {
+            time: '',
+            hrCookieSales: 0
+        }
+        
         let incrementalHour = openingTime;
-        for (let i = 0; i < numberOfOpenHours; i++){
+        for (let i = 0; i < numberOfOpenHours; i++) {
             this.hourlyData[i] = Object.create(hourData);
             this.hourlyData[i].time = incrementalHour;
             incrementalHour = incrementHour(incrementalHour);
         }
-        
-    },
+    }   
 
     // Calculates the sum of all the cookies sold that day and stores the value in the object
     tabulateTotalSales(){
@@ -115,7 +116,7 @@ const storeFront = {
             summation += this.hourlyData[i].hrCookieSales;
         }
         this.dailyCookieSales = summation;
-    },
+    }
 
     // Prints location data to the console log
     printLocationToConsole(){
@@ -125,18 +126,23 @@ const storeFront = {
             console.log(`${this.hourlyData[i].time}: ${this.hourlyData[i].hrCookieSales}`);
         }
         console.log(this.dailyCookieSales);
-    },
+    }
 
     // Prints location data to HTML in an unordered list format
     printLocationULtoHTML(){
         const parentElement = document.getElementById("listPrintOut");
 
+        const dividerTag = document.createElement('div');
+        dividerTag.setAttribute('id', 'sideBySide');
+        parentElement.appendChild(dividerTag);
+
         const listTitle = document.createElement('p');
-        listTitle.textContent = `Location: ${this.city}`;
-        parentElement.appendChild(listTitle);
+        listTitle.setAttribute('id', 'location');
+        listTitle.textContent = `Location: ${this.city}`;        
+        dividerTag.appendChild(listTitle);
 
         const unorderedList = document.createElement('ul');
-        parentElement.appendChild(unorderedList);
+        dividerTag.appendChild(unorderedList);
 
         for (let i = 0; i < this.hourlyData.length; i++){
             const listItem = document.createElement('li');
@@ -145,10 +151,11 @@ const storeFront = {
         }
 
         const printTotal = document.createElement('p');
+        printTotal.setAttribute('id', 'total');
         printTotal.textContent = `Total: ${this.dailyCookieSales}`;
-        parentElement.appendChild(printTotal);
+        dividerTag.appendChild(printTotal);
 
-    },
+    }
 
     // Prints location data to a table
     printLocationTableToHTML(){
@@ -219,6 +226,9 @@ let allLocationProjections = [];
 //     numberOfLocations++;
 // }
 
+
+// Plan is to have this read from a file at a later date
+// May later expand the storefront class to include portions of this information depending on future requirements
     for (let i = 0; i < numberOfLocations; i++){
         allStoreFrontParameters[i] = Object.create(storeFrontParameters);
     }
@@ -233,8 +243,7 @@ let allLocationProjections = [];
 // Constructing the table of locations
 for (let i = 0; i < numberOfLocations; i++){
 
-    allLocationProjections[i] = Object.create(storeFront);
-    allLocationProjections[i].constructHourDataArray();
+    allLocationProjections[i] = new storeFront();
     allLocationProjections[i].city = allStoreFrontParameters[i].city;
 }
 
@@ -242,12 +251,6 @@ for (let i = 0; i < numberOfLocations; i++){
 for (let i = 0; i < numberOfLocations; i++){
     populateProjectedStoreSales(allLocationProjections[i], allStoreFrontParameters[i]);
     allLocationProjections[i].tabulateTotalSales();
-
-    // for (let j = 0; j < numberOfOpenHours; j++)
-    // {
-    //     allLocationProjections[i].hourlyData[j].hrCookieSales = predictHourlyCookies(predictHourlyCustomers(allStoreFrontParameters[i]), allStoreFrontParameters[i].avgCookieSale);
-    // }
-    
 }
 
 // Print Locations in an unordered list
