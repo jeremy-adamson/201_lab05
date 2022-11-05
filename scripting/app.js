@@ -4,8 +4,6 @@ const openingTime = '6am';
 const closingTime = '8pm';
 const numberOfOpenHours = twentyFourHour(closingTime) - twentyFourHour(openingTime);
 
-
-
 // Converts time to 24 hour (military) time and keeps int datatype
 function twentyFourHour(time){
     let stringTime = time.slice(0, time.length-2);
@@ -194,23 +192,37 @@ class storeFront {
     //     // document.getElementById("listPrintOut").innerHTML = `${stringToPrint}`;
     }
 
+    // Nifty Function which returns either a header, footer, or data table row as an element
+    // If the passed argument is 'header' it will return a title row ('th') with times and 'total' at the end
+    // If the passed argument is 'footer' it will return a footer row ('th') with the totals
+    
     printLocationHorizontalTableRowToHTML(headOrFoot){
         // const parentElement = document.getElementById("listPrintOut");
+        let htmlTag = 'td';
+        let hrOrCookies = `hrCookieSales`;
+
+        if (headOrFoot){
+            htmlTag = 'th';
+        }
+
+        if (headOrFoot === 'head'){
+            hrOrCookies = `time`;
+        }
 
         const tableRow = document.createElement('tr');
         // parentElement.appendChild(tableRow);
 
-        const tableCity = document.createElement('td');
+        const tableCity = document.createElement(htmlTag);
         tableCity.textContent = this.city;
         tableRow.appendChild(tableCity);
 
         for (let i = 0; i < this.hourlyData.length; i++){
-            const tableCookies = document.createElement('td');
-            tableCookies.textContent = `${this.hourlyData[i].hrCookieSales}`
+            const tableCookies = document.createElement(htmlTag);
+            tableCookies.textContent = `${this.hourlyData[i][hrOrCookies]}`
             tableRow.appendChild(tableCookies);
         }
 
-        const tableTotal = document.createElement('td');
+        const tableTotal = document.createElement(htmlTag);
         tableTotal.textContent = `${this.dailyCookieSales}`;
         tableRow.appendChild(tableTotal);
 
@@ -219,14 +231,32 @@ class storeFront {
     }
 }
 
+function returnTableHeaderElement(){
+    // Creation of top row on the Table
+    let headerRowWithTimes = new storeFront(`  `);
+    headerRowWithTimes.dailyCookieSales = `Daily Location Total`;
+
+    return headerRowWithTimes.printLocationHorizontalTableRowToHTML('head');
+}
+
+function returnTableFooterElement(){
+    // Creation of the totals row for each day
+    let dailyAllLocationTotal = new storeFront(`Totals`);
+    for (let i = 0; i < numberOfOpenHours; i++) {
+        let dailyAllTotal = 0;
+        for (let j = 0; j < allLocationProjections.length; j++) {
+            dailyAllTotal += allLocationProjections[j].hourlyData[i].hrCookieSales;
+        }
+        dailyAllLocationTotal.hourlyData[i].hrCookieSales = dailyAllTotal;
+    }
+    dailyAllLocationTotal.tabulateTotalSales();
+
+    return dailyAllLocationTotal.printLocationHorizontalTableRowToHTML('foot');
+}
+
 // Givens
-let numberOfLocations = 5;
 let allStoreFrontParameters = [];
 let allLocationProjections = [];
-
-for (let i = 0; i < numberOfLocations; i++){
-    allStoreFrontParameters[i] = Object.create(storeFrontParameters);
-}
 
 allStoreFrontParameters[0] = {city: "Seattle", minCustHr: 23, maxCustHr: 65, avgCookieSale: 6.3};
 allStoreFrontParameters[1] = {city: "Tokyo", minCustHr: 3, maxCustHr: 24, avgCookieSale: 1.2};
@@ -234,70 +264,44 @@ allStoreFrontParameters[2] = {city: "Dubai", minCustHr: 11, maxCustHr: 38, avgCo
 allStoreFrontParameters[3] = {city: "Paris", minCustHr: 20, maxCustHr: 38, avgCookieSale: 2.3};
 allStoreFrontParameters[4] = {city: "Lima", minCustHr: 2, maxCustHr: 16, avgCookieSale: 4.6};
 
-
 // Constructing the table of locations
-for (let i = 0; i < numberOfLocations; i++){
+for (let i = 0; i < allStoreFrontParameters.length; i++){
     allLocationProjections[i] = new storeFront(allStoreFrontParameters[i].city);
 }
 
 // Populate the table of locations with projected data
-for (let i = 0; i < numberOfLocations; i++){
+for (let i = 0; i < allStoreFrontParameters.length; i++){
     populateProjectedStoreSales(allLocationProjections[i], allStoreFrontParameters[i]);
     allLocationProjections[i].tabulateTotalSales();
 }
 
-// Print Locations in an unordered list
-// let cssColumnFormatting = '';
-// for (let i = 0; i < numberOfLocations; i++){
-//     allLocationProjections[i].printLocationULtoHTML();
-//     cssColumnFormatting += `auto `;
-// }
-// document.getElementById('listPrintOut').style.gridTemplateColumns = cssColumnFormatting;
 
-
-let headerRowWithTimes = new storeFront(`  `);
-headerRowWithTimes.dailyCookieSales = `Daily Location Total`;
-
-let dailyAllLocationTotal = new storeFront(`Totals`);
-for (let i = 0; i < numberOfOpenHours; i++){
-    let dailyAllTotal = 0;
-    for (let j = 0; j < allLocationProjections.length; j++){
-        dailyAllTotal += allLocationProjections[j].hourlyData[i].hrCookieSales;
-    }
-    dailyAllLocationTotal.hourlyData[i].hrCookieSales = dailyAllTotal;
-}
-dailyAllLocationTotal.tabulateTotalSales();
-
-
+// Table Setup
 const tableParent = document.getElementById("listPrintOut");
-
 const tableElement = document.createElement('table');
 tableParent.appendChild(tableElement);
 
-const headerRow = document.createElement('tr');
-tableElement.appendChild(headerRow);
+// Print Header to Table
+let topRowToAppend = returnTableHeaderElement();
+tableElement.appendChild(topRowToAppend);
 
-const headerElementBlank = document.createElement('th');
-headerElementBlank.textContent = `  `;
-headerRow.appendChild(headerElementBlank);
-
-for (let i = 0; i < numberOfOpenHours; i++){
-    const headerElement = document.createElement('th');
-    headerElement.textContent = allLocationProjections[0].hourlyData[i].time;
-    headerRow.appendChild(headerElement);
-}
-
-const headerElementTotal = document.createElement('th');
-headerElementTotal.textContent = `Total`;
-headerRow.appendChild(headerElementTotal);
-
-
-for (let i = 0; i < numberOfLocations; i++){
+// Print Data to Table
+for (let i = 0; i < allStoreFrontParameters.length; i++){
     let rowToAppend = allLocationProjections[i].printLocationHorizontalTableRowToHTML();
     tableElement.appendChild(rowToAppend);
 }
 
-let totalsRowToAppend = dailyAllLocationTotal.printLocationHorizontalTableRowToHTML();
+// Print Footer to Table
+let totalsRowToAppend = returnTableFooterElement();
 tableElement.appendChild(totalsRowToAppend);
+
+
+// Print Locations in an unordered list
+// let cssColumnFormatting = '';
+// for (let i = 0; i < allStoreFrontParameters.length; i++){
+//     allLocationProjections[i].printLocationULtoHTML();
+//     cssColumnFormatting += `auto `;
+// }
+// document.getElementById('listPrintOut').style.gridTemplateColumns = cssColumnFormatting;
 
 
