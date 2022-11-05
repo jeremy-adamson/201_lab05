@@ -146,7 +146,7 @@ class storeFront {
     }
 
     // Prints location data to a table
-    printLocationTableToHTML(){
+    printLocationVerticalTableToHTML(){
     //  Method#1
     //     let parentElement = document.getElementById("listPrintOut");
 
@@ -193,8 +193,31 @@ class storeFront {
     //     // stringToPrint += `<tr><td> Total: </td> <td> ${this.dailyCookieSales} </td></tr>`;
     //     // document.getElementById("listPrintOut").innerHTML = `${stringToPrint}`;
     }
-}
 
+    printLocationHorizontalTableRowToHTML(headOrFoot){
+        // const parentElement = document.getElementById("listPrintOut");
+
+        const tableRow = document.createElement('tr');
+        // parentElement.appendChild(tableRow);
+
+        const tableCity = document.createElement('td');
+        tableCity.textContent = this.city;
+        tableRow.appendChild(tableCity);
+
+        for (let i = 0; i < this.hourlyData.length; i++){
+            const tableCookies = document.createElement('td');
+            tableCookies.textContent = `${this.hourlyData[i].hrCookieSales}`
+            tableRow.appendChild(tableCookies);
+        }
+
+        const tableTotal = document.createElement('td');
+        tableTotal.textContent = `${this.dailyCookieSales}`;
+        tableRow.appendChild(tableTotal);
+
+        return tableRow;
+
+    }
+}
 
 // Givens
 let numberOfLocations = 5;
@@ -224,10 +247,57 @@ for (let i = 0; i < numberOfLocations; i++){
 }
 
 // Print Locations in an unordered list
-let cssColumnFormatting = '';
-for (let i = 0; i < numberOfLocations; i++){
-    allLocationProjections[i].printLocationULtoHTML();
-    cssColumnFormatting += `auto `;
+// let cssColumnFormatting = '';
+// for (let i = 0; i < numberOfLocations; i++){
+//     allLocationProjections[i].printLocationULtoHTML();
+//     cssColumnFormatting += `auto `;
+// }
+// document.getElementById('listPrintOut').style.gridTemplateColumns = cssColumnFormatting;
+
+
+let headerRowWithTimes = new storeFront(`  `);
+headerRowWithTimes.dailyCookieSales = `Daily Location Total`;
+
+let dailyAllLocationTotal = new storeFront(`Totals`);
+for (let i = 0; i < numberOfOpenHours; i++){
+    let dailyAllTotal = 0;
+    for (let j = 0; j < allLocationProjections.length; j++){
+        dailyAllTotal += allLocationProjections[j].hourlyData[i].hrCookieSales;
+    }
+    dailyAllLocationTotal.hourlyData[i].hrCookieSales = dailyAllTotal;
 }
-document.getElementById('listPrintOut').style.gridTemplateColumns = cssColumnFormatting;
+dailyAllLocationTotal.tabulateTotalSales();
+
+
+const tableParent = document.getElementById("listPrintOut");
+
+const tableElement = document.createElement('table');
+tableParent.appendChild(tableElement);
+
+const headerRow = document.createElement('tr');
+tableElement.appendChild(headerRow);
+
+const headerElementBlank = document.createElement('th');
+headerElementBlank.textContent = `  `;
+headerRow.appendChild(headerElementBlank);
+
+for (let i = 0; i < numberOfOpenHours; i++){
+    const headerElement = document.createElement('th');
+    headerElement.textContent = allLocationProjections[0].hourlyData[i].time;
+    headerRow.appendChild(headerElement);
+}
+
+const headerElementTotal = document.createElement('th');
+headerElementTotal.textContent = `Total`;
+headerRow.appendChild(headerElementTotal);
+
+
+for (let i = 0; i < numberOfLocations; i++){
+    let rowToAppend = allLocationProjections[i].printLocationHorizontalTableRowToHTML();
+    tableElement.appendChild(rowToAppend);
+}
+
+let totalsRowToAppend = dailyAllLocationTotal.printLocationHorizontalTableRowToHTML();
+tableElement.appendChild(totalsRowToAppend);
+
 
