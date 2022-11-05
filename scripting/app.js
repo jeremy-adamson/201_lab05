@@ -1,5 +1,11 @@
 'use strict';
 
+// To Do:
+//          Store additional field for scaled customers according to the curve instead of user prompt
+//          Add button to allow the user to swap back and forth between applying the curve and not
+//              Would require the button to refresh the page/table, unknown how to do this at this time
+//          Add a json file with the initial store parameters and read from it
+
 const openingTime = '6am';
 const closingTime = '8pm';
 const numberOfOpenHours = twentyFourHour(closingTime) - twentyFourHour(openingTime);
@@ -9,7 +15,11 @@ const trafficCurve = [.5, .75, 1.0,
                         .9, .7, .5,
                         .3, .4, .6]
 
-// Converts time to 24 hour (military) time and keeps int datatype
+
+// Purpose: Converts time to 24 hour (military) format and keeps int datatype
+// Input:   String of the time to be converted in 'XXam' or 'XXpm' format
+// Return:  Int type of the 24 time
+
 function twentyFourHour(time){
     let stringTime = time.slice(0, time.length-2);
     let timeSuffix = time.slice(time.length-2, 4);
@@ -25,8 +35,11 @@ function twentyFourHour(time){
     }    
 }
 
-// Converts time to 12 hour (am/pm) time and returns string datatype
-// Not currently setup for going past 11pm
+// Purpose: Converts time to 12 hour (am/pm) time and returns string datatype
+// Input:   Int type only using the hour in 24 hour format (military)
+// Return:  String version of the time in 12 hour format
+// Note:    Not currently setup for going past 11pm
+
 function twelveHour(time){
     let intTime = Number(time);
     if (intTime < 12){
@@ -40,52 +53,79 @@ function twelveHour(time){
     }
 }
 
-// Increments a given time (string) to the next hour
+
+// Purpose: Increments a given time (string) to the next hour
+// Input:   String in 12 hour format
+// Return:  String in 12 hour format plus one hour
+
 function incrementHour(time){
     time = twentyFourHour(time) + 1;
     return (twelveHour(time));
 }
 
+
+// Purpose: Given the customers and the cookies purchase per customer, calculates the cookies sold
+// Input:   Number of customers and average number of cookies per customer
+// Return:  Number of cookies purchased
+
 function predictHourlyCookies(customers, avePerCust){
     return(customers * avePerCust);
 }
 
-// Passed storeFront and storeFrontParametersType
+
+// Purpose: Populate a particular StoreFront object with projected sales based upon given parameters
+// Input:   StoreFront data type where the information is to be stored
+//          cityParameters data type with the min/max customers per hour information
+//          curveFlag boolean to indicate if the curve is to be taken into account
+// Return:  None.  All StoreFront values are populated by reference
+
 function populateProjectedStoreSales(city, cityParameters, curveFlag){
     let hourlyCustomers = 0;
     let rawSales = 0;
     let employees = 0;
     let curveCoefficient = 1;
-
    
     for (let i = 0; i < numberOfOpenHours; i++) {
 
+        // If curve is to be applied, use the damping coefficient at the index
+        // Otherwise coefficent remains at 1
         if (curveFlag){
             curveCoefficient = trafficCurve[i];
         }
 
         hourlyCustomers = predictHourlyCustomers(cityParameters, curveCoefficient);
         rawSales = predictHourlyCookies(hourlyCustomers, cityParameters.avgCookieSale);
-
-        console.log(hourlyCustomers);
-
-        employees = Math.ceil(hourlyCustomers / 20.0);
-
-        if (employees < 2){
-            employees = 2;
-        }
-        
-        city.hourlyData[i].hrCookieSales = Math.round(rawSales);
+        employees = predictEmployees(hourlyCustomers);        
+                
         city.hourlyData[i].customers = hourlyCustomers;
+        city.hourlyData[i].hrCookieSales = Math.round(rawSales);
         city.hourlyData[i].employees = employees;
     }
 }
 
-// Passed storeFrontParameters type, return integer
+
+// Purpose: To predict the number of customers for that hour
+// Input:   cityParameters object with information on the maximum and minimum customers per hour
+//          curveCoefficient number to scale the number of customers as described by a given distribution per hour
+// Return:  The estimated number of customers in integer value
+
 function predictHourlyCustomers(cityParameters, curveCoefficient){
     let custRange = cityParameters.maxCustHr - cityParameters.minCustHr;
     let estimatedCustomers = Math.floor((Math.random() * (custRange + 1) + cityParameters.minCustHr) * curveCoefficient);
     return estimatedCustomers;
+}
+
+
+// Purpose: To predict the number of employees to staff the store with for a number of customers
+// Input:   The number of customers for that hour
+// Return:  The number of employees needed
+
+function predictEmployees(hourlyCustomers){
+    let employees = Math.ceil(hourlyCustomers / 20.0);
+    if (employees < 2){
+        employees = 2;
+    }
+    return employees;
 }
 
 
@@ -124,7 +164,7 @@ class StoreFront {
     // Purpose: Calculates the sum of all the cookies sold that day and stores the value in the object REQUIRED
     // Input:   None
     // Return:  None
-    
+
     tabulateTotalSales(){
         let summation = 0;
         for (let i = 0; i < this.hourlyData.length; i++){
@@ -215,9 +255,19 @@ class StoreFront {
         return tableSection;
     }
 
+
+    // Purpose: To pass the proper flags indicating a cookie data row is to be printed to an HTML element
+    // Input:   None
+    // Return:  Table row element for cookies
+
     returnCookieTableDataElement(){
         return (this.printLocationHorizontalTableRowToHTML('tbody', 'hrCookieSales', true));
     }
+
+
+    // Purpose: To pass the proper flags indicating an employee data row is to be printed to an HTML element
+    // Input:   None
+    // Return:  Table row element for employees needed
 
     returnEmployeeTableDataElement(){
         return (this.printLocationHorizontalTableRowToHTML('tbody', 'employees', false));

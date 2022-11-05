@@ -1,6 +1,4 @@
-tr:nth-child(even) {
-    background-color: #D6EEEE;
-}
+
 
 th, td {
     padding: 5px;
@@ -40,7 +38,7 @@ div.navbar{
 }
 
 body {
-    background-color: bisque;
+    background-color: #F7D6D0;
 }
 
 #location {
@@ -53,10 +51,9 @@ body {
 
 .grid-container {
     display: grid;
-    /* grid-template-columns: auto auto auto auto auto; */
     background-color: salmon;
     padding: 10px;
-  }
+}
 
 .grid-item {
     background-color: rgba(255, 255, 255, 0.8);
@@ -64,4 +61,58 @@ body {
     padding: 20px;
     font-size: 20px;
     text-align: center;
-  }
+}
+
+table {
+    width: 70%;
+    background-color: rgb(252, 163, 153);
+
+}
+
+table, th, td {
+    border: 1px solid;
+    border-collapse: collapse;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+td:first-child{
+    background-color: salmon;
+}
+
+th:first-child{
+    background-color: salmon;
+}
+
+thead {
+    background-color: salmon;
+}
+
+h2{
+    text-align: center;
+    background-color: #fca0bd;
+    width: 35%;
+    margin-left: auto;
+    margin-right: auto;
+    border: 2px;
+    border-radius: 10px;
+    color: #821D30;
+}
+
+h1{
+    text-align: center;
+    background-color: #fca0bd;
+    width: 35%;
+    margin-left: auto;
+    margin-right: auto;
+    border: 2px;
+    border-radius: 10px;
+    color: #821D30;
+}
+
+img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 30%;
+}
