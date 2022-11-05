@@ -51,7 +51,6 @@ function populateProjectedStoreSales(city, cityParameters){
         let rawSales = 0;
         rawSales = predictHourlyCookies(predictHourlyCustomers(cityParameters), cityParameters.avgCookieSale);
         city.hourlyData[i].hrCookieSales = Math.round(rawSales);
-        // return (Math.round(rawSales));
     }
 }
 
@@ -64,12 +63,12 @@ function predictHourlyCustomers(cityParameters){
 
 
 // Main structure to store the given parameters for one particular location
-const storeFrontParameters = {
-    city: '',
-    minCustHr: 0,
-    maxCustHr: 0,
-    avgCookieSale: 0
-}
+// const storeFrontParameters = {
+//     city: '',
+//     minCustHr: 0,
+//     maxCustHr: 0,
+//     avgCookieSale: 0
+// }
 
 
 
@@ -258,6 +257,7 @@ function returnTableFooterElement(){
 let allStoreFrontParameters = [];
 let allLocationProjections = [];
 
+// Personal stretch goal, to have the following information in a json file and have the script read from that
 allStoreFrontParameters[0] = {city: "Seattle", minCustHr: 23, maxCustHr: 65, avgCookieSale: 6.3};
 allStoreFrontParameters[1] = {city: "Tokyo", minCustHr: 3, maxCustHr: 24, avgCookieSale: 1.2};
 allStoreFrontParameters[2] = {city: "Dubai", minCustHr: 11, maxCustHr: 38, avgCookieSale: 3.7};
