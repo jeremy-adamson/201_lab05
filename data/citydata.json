@@ -1,0 +1,5 @@
+cityParam = [   {"city" : "Seattle", "minCustHr" : 23, "maxCustHr" : 65, "avgCookieSale" : 6.3},
+                {"city" : "Tokyo", "minCustHr" : 3, "maxCustHr" : 24, "avgCookieSale" : 1.2},
+                {"city" : "Dubai", "minCustHr" : 11, "maxCustHr" : 38, "avgCookieSale" : 3.7},
+                {"city" : "Paris", "minCustHr" : 20, "maxCustHr" : 38, "avgCookieSale" : 2.3},
+                {"city" : "Lima", "minCustHr" : 2, "maxCustHr" : 16, "avgCookieSale" : 4.6}];

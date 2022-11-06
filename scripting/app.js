@@ -5,15 +5,13 @@
 //          Add button to allow the user to swap back and forth between applying the curve and not
 //              Would require the button to refresh the page/table, unknown how to do this at this time
 //          Add a json file with the initial store parameters and read from it
+//              It works, but pretty sure that JSON.parse was supposed to be used and JS didn't like the method call (***ask later***)
 
 const openingTime = '6am';
 const closingTime = '8pm';
 const numberOfOpenHours = twentyFourHour(closingTime) - twentyFourHour(openingTime);
-const trafficCurve = [.5, .75, 1.0,
-                        .6, .8, 1.0,
-                        .7, .4, .6,
-                        .9, .7, .5,
-                        .3, .4, .6]
+const trafficCurve = [.5, .75, 1.0, .6, .8, 1.0, .7, .4, .6, .9, .7, .5, .3, .4, .6];
+const allStoreFrontParameters = cityParam; // Import city data parameters/givens from attached JSON file
 
 
 // Purpose: Converts time to 24 hour (military) format and keeps int datatype
@@ -129,18 +127,11 @@ function predictEmployees(hourlyCustomers){
 }
 
 
-// Main structure to store the given parameters for one particular location
-// const storeFrontParameters = {
-//     city: '',
-//     minCustHr: 0,
-//     maxCustHr: 0,
-//     avgCookieSale: 0
-// }
-
-
-
 // Main structure for each particular store front to track sales by hour
-// Contains location name, array of sales per hour, total cookies sold that day
+// Contains:
+//          Location name (city)
+//          Array of containing information for each hour such as time, cookie sales, customers, and employees needed
+//          Total cookies sold that day (dailyCookieSales)
 class StoreFront {
     constructor(city) {
         this.city = city;
@@ -376,19 +367,11 @@ function createTableOfEmployees(allLocationProjections){
 
 }
 
-// Setup for arrays containing multiple stores
-let allStoreFrontParameters = [];
-let allLocationProjections = [];
 
-// Personal stretch goal, to have the following information in a json file and have the script read from that
-allStoreFrontParameters[0] = {city: "Seattle", minCustHr: 23, maxCustHr: 65, avgCookieSale: 6.3};
-allStoreFrontParameters[1] = {city: "Tokyo", minCustHr: 3, maxCustHr: 24, avgCookieSale: 1.2};
-allStoreFrontParameters[2] = {city: "Dubai", minCustHr: 11, maxCustHr: 38, avgCookieSale: 3.7};
-allStoreFrontParameters[3] = {city: "Paris", minCustHr: 20, maxCustHr: 38, avgCookieSale: 2.3};
-allStoreFrontParameters[4] = {city: "Lima", minCustHr: 2, maxCustHr: 16, avgCookieSale: 4.6};
 
 
 // Constructing the table of locations
+let allLocationProjections = [];
 for (let i = 0; i < allStoreFrontParameters.length; i++){
     allLocationProjections[i] = new StoreFront(allStoreFrontParameters[i].city);
 }
@@ -405,14 +388,15 @@ for (let i = 0; i < allStoreFrontParameters.length; i++){
 // Prints out a table of sales
 createTableOfSales(allLocationProjections);
 
-// Prints out a table of sales
+// Prints out a table of employees needed
 createTableOfEmployees(allLocationProjections);
 
 
 
 
-
-
+// **************************************************************
+// ***** Fun extra code below for educational purposes only *****
+// **************************************************************
 
 // Print Footer to Table
 // totalsRowToAppend = returnTableFooterElement();
@@ -426,8 +410,6 @@ createTableOfEmployees(allLocationProjections);
 // }
 // document.getElementById('listPrintOut').style.gridTemplateColumns = cssColumnFormatting;
 
-
-// ***** Fun extra code for educational purposes only *****
 
     // Prints location data to a table
     // printLocationVerticalTableToHTML(){
