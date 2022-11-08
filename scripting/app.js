@@ -213,7 +213,7 @@ class StoreFront {
 
     // Purpose: Nifty method which returns either a header, footer, or data table row as an element
     // Input:   rowType accepts `thead`, `tbody`, or `tfoot` to generate that type of table section
-    //          property accepts table tags, either `th` or `td` to generate the type of row
+    //          property accepts the property of HourData to be printed out in the row
     //          withTotal is a boolean which controls if the dailyCookieSales property is to be included in the row
     // Return:  A table row element of one StoreFront type
     
@@ -234,9 +234,9 @@ class StoreFront {
         tableRow.appendChild(tableCity);
 
         for (let i = 0; i < this.hourlyData.length; i++){
-            const tableCookies = document.createElement(htmlTag);
-            tableCookies.textContent = `${this.hourlyData[i][property]}`
-            tableRow.appendChild(tableCookies);
+            const tableData = document.createElement(htmlTag);
+            tableData.textContent = `${this.hourlyData[i][property]}`
+            tableRow.appendChild(tableData);
         }
 
         if (withTotal){
@@ -327,7 +327,7 @@ function askIfCurve(){
 // Purpose: To print out the cookies sold at each location per hour
 // Input:   An array containing all of the storefronts
 // Return:  None
-function createTableOfSales(allLocationProjections){
+function printTableOfSales(allLocationProjections){
     // Table Setup
     let tableParent = document.getElementById("listPrintOut");
     let tableElement = document.createElement('table');
@@ -351,7 +351,7 @@ function createTableOfSales(allLocationProjections){
 // Purpose: To print out the employees working at each location per hour
 // Input:   An array containing all of the storefronts
 // Return:  None
-function createTableOfEmployees(allLocationProjections){
+function printTableOfEmployees(allLocationProjections){
     // Table Setup
     let tableParent = document.getElementById("employeeTable");
     let tableElement = document.createElement('table');
@@ -386,10 +386,10 @@ for (let i = 0; i < allStoreFrontParameters.length; i++){
 }
 
 // Prints out a table of sales
-createTableOfSales(allLocationProjections);
+printTableOfSales(allLocationProjections);
 
 // Prints out a table of employees needed
-createTableOfEmployees(allLocationProjections);
+printTableOfEmployees(allLocationProjections);
 
 
 
