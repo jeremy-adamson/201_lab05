@@ -5,8 +5,9 @@
 //          Add button to allow the user to swap back and forth between applying the curve and not
 //              Would require the button to refresh the page/table, unknown how to do this at this time
 //          Add a json file with the initial store parameters and read from it
-//              It works, but pretty sure that JSON.parse was supposed to be used and JS didn't like the method call (***ask later***)
+//              Question on how to read specific information and section tags from said file (***Ask later***)
 
+import cityParam from '../data/citydata.json' assert {type: 'json'};
 const openingTime = '6am';
 const closingTime = '8pm';
 const numberOfOpenHours = twentyFourHour(closingTime) - twentyFourHour(openingTime);
@@ -71,6 +72,31 @@ function predictHourlyCookies(customers, avePerCust){
 }
 
 
+// Purpose: To predict the number of customers for that hour
+// Input:   cityParameters object with information on the maximum and minimum customers per hour
+//          curveCoefficient number to scale the number of customers as described by a given distribution per hour
+// Return:  The estimated number of customers in integer value
+
+function predictHourlyCustomers(cityParameters, curveCoefficient){
+    let custRange = cityParameters.maxCustHr - cityParameters.minCustHr;
+    let estimatedCustomers = Math.floor((Math.random() * (custRange + 1) + cityParameters.minCustHr) * curveCoefficient);
+    return estimatedCustomers;
+}
+
+
+// Purpose: To predict the number of employees to staff the store with for a number of customers
+// Input:   The number of customers for that hour
+// Return:  The number of employees needed
+
+function predictEmployees(hourlyCustomers){
+    let employees = Math.ceil(hourlyCustomers / 20.0);
+    if (employees < 2){
+        employees = 2;
+    }
+    return employees;
+}
+
+
 // Purpose: Populate a particular StoreFront object with projected sales based upon given parameters
 // Input:   StoreFront data type where the information is to be stored
 //          cityParameters data type with the min/max customers per hour information
@@ -102,35 +128,10 @@ function populateProjectedStoreSales(city, cityParameters, curveFlag){
 }
 
 
-// Purpose: To predict the number of customers for that hour
-// Input:   cityParameters object with information on the maximum and minimum customers per hour
-//          curveCoefficient number to scale the number of customers as described by a given distribution per hour
-// Return:  The estimated number of customers in integer value
-
-function predictHourlyCustomers(cityParameters, curveCoefficient){
-    let custRange = cityParameters.maxCustHr - cityParameters.minCustHr;
-    let estimatedCustomers = Math.floor((Math.random() * (custRange + 1) + cityParameters.minCustHr) * curveCoefficient);
-    return estimatedCustomers;
-}
-
-
-// Purpose: To predict the number of employees to staff the store with for a number of customers
-// Input:   The number of customers for that hour
-// Return:  The number of employees needed
-
-function predictEmployees(hourlyCustomers){
-    let employees = Math.ceil(hourlyCustomers / 20.0);
-    if (employees < 2){
-        employees = 2;
-    }
-    return employees;
-}
-
-
 // Main structure for each particular store front to track sales by hour
 // Contains:
 //          Location name (city)
-//          Array of containing information for each hour such as time, cookie sales, customers, and employees needed
+//          Array of object type containing information for each open hour such as time, cookie sales, customers, and employees needed
 //          Total cookies sold that day (dailyCookieSales)
 class StoreFront {
     constructor(city) {
@@ -167,6 +168,7 @@ class StoreFront {
     // Purpose: Prints StoreFront data to the console log
     // Input:   None
     // Return:  None
+    
     printLocationToConsole(){
 
         console.log(this.city);
@@ -215,7 +217,7 @@ class StoreFront {
     //          withTotal is a boolean which controls if the dailyCookieSales property is to be included in the row
     // Return:  A table row element of one StoreFront type
     
-    printLocationHorizontalTableRowToHTML(rowType, property, withTotal){
+    printLocationTableRowToHTML(rowType, property, withTotal){
 
         let htmlTag = 'td';
 
@@ -252,7 +254,7 @@ class StoreFront {
     // Return:  Table row element for cookies
 
     returnCookieTableDataElement(){
-        return (this.printLocationHorizontalTableRowToHTML('tbody', 'hrCookieSales', true));
+        return (this.printLocationTableRowToHTML('tbody', 'hrCookieSales', true));
     }
 
 
@@ -261,14 +263,14 @@ class StoreFront {
     // Return:  Table row element for employees needed
 
     returnEmployeeTableDataElement(){
-        return (this.printLocationHorizontalTableRowToHTML('tbody', 'employees', false));
+        return (this.printLocationTableRowToHTML('tbody', 'employees', false));
     }
    
 }
 
 
 // Purpose: To generate a header row containing hour labels and returns a printable HTML header element
-// Input:   None.  Requires array of store fronts ('allLocationProjections')
+// Input:   Boolean flag to indicate if total column is to be printed
 // Return:  Printable HTML table header element
 
 function returnTableHeaderElement(withTotal){
@@ -276,7 +278,7 @@ function returnTableHeaderElement(withTotal){
     let headerRowWithTimes = new StoreFront(`  `);
     headerRowWithTimes.dailyCookieSales = `Daily Location Total Cookies`;
 
-    return headerRowWithTimes.printLocationHorizontalTableRowToHTML('thead', 'time', withTotal);
+    return headerRowWithTimes.printLocationTableRowToHTML('thead', 'time', withTotal);
 }
 
 // Purpose: To generate a footer row containing the totals for each day and return a printable HTML footer element
@@ -295,7 +297,7 @@ function returnTableFooterElement(){
     }
     dailyAllLocationTotal.tabulateTotalSales();
 
-    return dailyAllLocationTotal.printLocationHorizontalTableRowToHTML('tfoot', 'hrCookieSales', true);
+    return dailyAllLocationTotal.printLocationTableRowToHTML('tfoot', 'hrCookieSales', true);
 }
 
 
@@ -366,8 +368,6 @@ function createTableOfEmployees(allLocationProjections){
     }
 
 }
-
-
 
 
 // Constructing the table of locations
