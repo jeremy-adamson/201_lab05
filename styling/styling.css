@@ -116,3 +116,31 @@ img {
     margin-right: auto;
     width: 30%;
 }
+
+.locationBox{
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 100%;
+    gap: 10px;
+}
+
+.locBox{
+    align-content: center;
+    border: 2px solid #821D30;
+    flex: 1 1 0px;
+    text-align: center;
+    padding: 1rem;
+}
+
+.pictureBox{
+    display:flex;
+    width: 100%;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    justify-content: space-between;
+}
+
+.picture{
+    width: 20%;
+}
