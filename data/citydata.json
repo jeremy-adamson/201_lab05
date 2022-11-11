@@ -3,30 +3,45 @@
         "city" : "Seattle",
         "minCustHr": 23,
         "maxCustHr": 65,
-        "avgCookieSale": 6.3
+        "avgCookieSale": 6.3,
+        "hours": "6am - 8pm",
+        "address": "1313 Mockingbird Lane",
+        "phone": "213-867-5309"
     },
     {
         "city" : "Tokyo",
         "minCustHr" : 3,
         "maxCustHr" : 24,
-        "avgCookieSale" : 1.2
+        "avgCookieSale" : 1.2,
+        "hours": "6am - 8pm",
+        "address": "407 Munsters Ct",
+        "phone": "993-562-5319"
     },
     {
         "city" : "Dubai",
         "minCustHr" : 11,
         "maxCustHr" : 38,
-        "avgCookieSale" : 3.7
+        "avgCookieSale" : 3.7,
+        "hours": "6am - 8pm",
+        "address": "777 Addams Family Cr.",
+        "phone": "343-467-5349"
     },
     {
         "city" : "Paris",
         "minCustHr" : 20,
         "maxCustHr" : 38,
-        "avgCookieSale" : 2.3
+        "avgCookieSale" : 2.3,
+        "hours": "6am - 8pm",
+        "address": "8714 Monster Mash Ln.",
+        "phone": "432-1567-7409"
     },
     {
         "city" : "Lima",
         "minCustHr" : 2,
         "maxCustHr" : 16,
-        "avgCookieSale" : 4.6
+        "avgCookieSale" : 4.6,
+        "hours": "6am - 8pm",
+        "address": "54321 Time Warp St.",
+        "phone": "827-567-3842"
     }
 ]
