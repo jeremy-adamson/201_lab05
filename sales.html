@@ -20,6 +20,28 @@
         <h2 id="header">!!!COOKIES SOLD!!!</h2>
         <div id="listPrintOut"></div>
         <br>
+        <form id="userStoreInput">
+            <fieldset>
+                <legend> Add a Store</legend>
+                <label>
+                    City:
+                    <input type="text" name="city" required placeholder="Enter city here">
+                </label>
+                <label>
+                    Min Customers:
+                    <input type="number" name="minCust" required min="0">
+                </label>
+                <label>
+                    Max Customers:
+                    <input type="number" name="maxCust" required min="0">
+                </label>
+                <label>
+                    Ave Cust Purchase:
+                    <input type="number" name="avePurchase" required min="0">
+                </label>
+                <button type="submit">Go Fish</button>
+            </fieldset>
+        </form>
         <h2>Employees Needed per Location</h2>
         <div id="employeeTable"></div>
         <img src="pictures/salmon.png">
