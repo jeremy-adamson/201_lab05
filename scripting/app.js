@@ -330,6 +330,7 @@ function askIfCurve(){
 function printTableOfSales(allLocationProjections){
     // Table Setup
     let tableParent = document.getElementById("listPrintOut");
+    tableParent.innerHTML = '';
     let tableElement = document.createElement('table');
     tableParent.appendChild(tableElement);
 
@@ -354,6 +355,7 @@ function printTableOfSales(allLocationProjections){
 function printTableOfEmployees(allLocationProjections){
     // Table Setup
     let tableParent = document.getElementById("employeeTable");
+    tableParent.innerHTML = '';
     let tableElement = document.createElement('table');
     tableParent.appendChild(tableElement);
 
@@ -369,6 +371,45 @@ function printTableOfEmployees(allLocationProjections){
 
 }
 
+function alreadyExists(city){
+    for (let i = 0; i < allLocationProjections.length; i++){
+        if (allLocationProjections[i].city === city){
+            return true;
+        }
+    }
+    return false;
+}
+
+function addStore(event){
+    event.preventDefault();
+    let city = event.target.city.value;
+    let minCust = parseInt(event.target.minCust.value);
+    let maxCust = parseInt(event.target.maxCust.value);
+    let avePurchase = event.target.avePurchase.value;
+
+    if (minCust > maxCust){
+        alert(`Error: Min customers > Max customers.`);
+        return;
+    }
+
+    if (alreadyExists(city)){
+        alert(`${city} is already in the table`);
+        return;
+    }
+
+    let newStore = new StoreFront(city);
+
+    let cityParam = {"minCustHr": minCust, "maxCustHr": maxCust, "avgCookieSale": avePurchase};
+    
+    populateProjectedStoreSales(newStore, cityParam, applyCurve);
+    newStore.tabulateTotalSales();
+
+    allLocationProjections.push(newStore);
+
+    printTableOfSales(allLocationProjections);
+    printTableOfEmployees(allLocationProjections);
+}
+
 
 // Constructing the table of locations
 let allLocationProjections = [];
@@ -377,7 +418,9 @@ for (let i = 0; i < allStoreFrontParameters.length; i++){
 }
 
 // Ask if the user wishes to apply the customer curve
-let applyCurve = askIfCurve();
+// let applyCurve = askIfCurve();
+
+let applyCurve = false;
 
 // Populate the table of locations with projected data
 for (let i = 0; i < allStoreFrontParameters.length; i++){
@@ -390,6 +433,9 @@ printTableOfSales(allLocationProjections);
 
 // Prints out a table of employees needed
 printTableOfEmployees(allLocationProjections);
+
+let userStoreInput = document.getElementById('userStoreInput');
+userStoreInput.addEventListener("submit", addStore);
 
 
 
