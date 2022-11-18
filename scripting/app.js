@@ -418,9 +418,7 @@ for (let i = 0; i < allStoreFrontParameters.length; i++){
 }
 
 // Ask if the user wishes to apply the customer curve
-// let applyCurve = askIfCurve();
-
-let applyCurve = false;
+let applyCurve = askIfCurve();
 
 // Populate the table of locations with projected data
 for (let i = 0; i < allStoreFrontParameters.length; i++){

@@ -151,4 +151,11 @@ fieldset{
     gap: 2rem;
     border: 2px solid #821D30;
     border-radius: 10px;
+    margin: auto;
+    width:max-content;
+}
+
+legend{
+    font-size: larger;
+    font-weight: bold;
 }
